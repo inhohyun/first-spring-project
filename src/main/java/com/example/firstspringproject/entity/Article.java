@@ -2,6 +2,7 @@ package com.example.firstspringproject.entity;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 @ToString
 // DB가 해당 객체를 인식 가능!
 @Entity
+@Getter
 public class Article {
 
     @Id // 대표값을 지정!
@@ -27,4 +29,7 @@ public class Article {
     private String content;
 
     //디폴트 생성자 필요 -> 생성자인데 파라미터가 없는 생성자 -> 상단에서 lombok을 활용해서 세팅
+
+
+
 }
