@@ -10,6 +10,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class ArticleForm {
+    private Long id;
     private String title;
     private String content;
 
@@ -20,6 +21,6 @@ public class ArticleForm {
     //Entity인 Article 객체 생성하기
     public Article toEntitiy() {
 
-        return new Article(null, title, content);
+        return new Article(id, title, content);
     }
 }
