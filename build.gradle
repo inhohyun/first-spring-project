@@ -20,7 +20,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.22'
-    runtimeOnly 'com.h2database:h2'
+
+    implementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	//롬복 추가! -> 코드 간소화를 위한 라이브러리
 	compileOnly 'org.projectlombok:lombok'

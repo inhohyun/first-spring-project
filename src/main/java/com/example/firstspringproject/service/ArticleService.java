@@ -19,6 +19,7 @@ public class ArticleService {
 
     public List<Article> index() {
         return articleRepository.findAll();
+
     }
 
     public Article show(Long id) {
