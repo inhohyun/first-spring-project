@@ -3,6 +3,7 @@ package com.example.firstspringproject.api;
 import com.example.firstspringproject.dto.ArticleForm;
 import com.example.firstspringproject.entity.Article;
 import com.example.firstspringproject.repository.ArticleRepository;
+import com.example.firstspringproject.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,70 +15,49 @@ import java.util.List;
 @Slf4j
 @RestController //RestApi용 컨트롤러 데이터(JSON)을 반환
 public class ArticleApiController {
-
-    @Autowired //DI : Dependence Injection, 외부에서 가져온다는 뜻
-    private ArticleRepository articleRepository;
+    @Autowired // DI, 생성 객체를 가져와 연결
+    private ArticleService articleService;
 
     //GET
     @GetMapping("/api/articles")
     public List<Article> index() {
 
-        return articleRepository.findAll();
+        return articleService.index();
     }
 
     @GetMapping("/api/articles")
-    public Article index(@PathVariable Long id) {
+    public Article show(@PathVariable Long id) {
 
-        return articleRepository.findById(id).orElse(null);
+        return articleService.show(id);
     }
 
     //POST
     @PostMapping("/api/articles")
-    public Article create(@RequestBody ArticleForm dto) {
-        Article article = dto.toEntitiy();
+    public ResponseEntity<Article> create(@RequestBody ArticleForm dto) {
+        Article created = articleService.create(dto);
 
-        return articleRepository.save(article);
+        return (created != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(created) :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     //PATCH
     @PatchMapping("/api/articles/{id}")
     //ResponseEntity로 보내면 상태코드를 함께 보내줄 수 있음
     public ResponseEntity<Article> update(@PathVariable Long id, @RequestBody ArticleForm dto) {
-        // 1. 수정용 엔티티 생성
-        Article article = dto.toEntitiy();
-        log.info("id : {}, article: {}", id, article.toString());
+        //컨트롤러는 뭘 받아오고 뭘 리턴해야하는지만 알고있음
+        Article updated = articleService.update(id, dto);
 
-
-        //2. 대상 엔티티를 조회
-        Article target = articleRepository.findById(id).orElse(null);
-        //3. 잘못된 요청 처리(대상이 없거나, id가 다른 경우)
-        if (target == null || id != article.getId()) {
-            //400, 잘못된 요청 응답
-            log.info("잘못된 요청! id : {}, article: {}", id, article.toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        //4. 업데이트 및 정상 응답
-        target.patch(article);
-        Article updated = articleRepository.save(target);
-
-
-        //ResponseEntityp에 200번 코드와 body에 업데이트 내용을 실어서 보냄
-        return ResponseEntity.status(HttpStatus.OK).body(updated);
+        return (updated != null) ? ResponseEntity.status(HttpStatus.OK).body(updated) : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     //DELETE
     @DeleteMapping("/api/articles{id}")
     public ResponseEntity<Article> delete(@PathVariable Long id) {
-        //대상 찾기
-        Article target = articleRepository.findById(id).orElse(null);
-        //잘못된 요청 처리
-        if (target == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        Article deleted = articleService.delete(id);
 
-        //대상 삭제
-        articleRepository.delete(target);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return (deleted != null) ? ResponseEntity.status(HttpStatus.OK).build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    //트랜잭션
 }
