@@ -26,6 +26,17 @@ public class Article {
     @Column
     private String content;
 
+    //수정중 부분 null값을 방지하기 위해 부분적으로 값이 없는채로 업데이트할 경우 없는 부분은 기존 값을 유지
+    public void patch(Article article) {
+        if (article.title != null){
+            this.title = article.title;
+        }
+        if (article.content != null){
+            this.content = article.content;
+
+        }
+    }
+
     //디폴트 생성자 필요 -> 생성자인데 파라미터가 없는 생성자 -> 상단에서 lombok을 활용해서 세팅
 
 
